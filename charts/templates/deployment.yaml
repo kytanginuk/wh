@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wh-nginx
+  labels:
+    app: wh
+spec:
+  replicas: 2
+  strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 25%  
+  selector:
+    matchLabels:
+      app: wh
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        env:
+          - name:  API_KEY
+            value: {{ .Values.api.key }}         
+        ports:
+        - containerPort: 8080

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: wh-pod
+spec:
+  serviceAccountName: wh-user
+  automountServiceAccountToken: false
