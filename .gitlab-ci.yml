@@ -2,7 +2,8 @@ variables:
   NAMESPACE: 'wh'
   CHART_NAME: 'wh'
   CHART_PATH: './chart' 
-
+  HELM_RELEASE_NAME: wh
+  HELM_VALUES: './charts/values.yaml'
 ## CI JOBS
 .ci_job: &ci_job
    only:
@@ -20,6 +21,10 @@ variables:
   script:
   - helm upgrade --install "$HELM_RELEASE_NAME" -f "$HELM_VALUES" "$CHART_PATH" --namespace "$NAMESPACE"
 
+.uninstall: &uninstall
+  script:
+  - helm uninstall "$HELM_RELEASE_NAME" --namespace "$NAMESPACE"
+
 stages:
   - kubectl
   - helm
@@ -35,3 +40,9 @@ stages:
   variables:
   <<: *install_upgrade
   <<: *ci_manual_job
+
+02-uninstall:
+  stage: helm
+  variables:
+  <<: *uninstall
+  <<: *ci_manual_job 
