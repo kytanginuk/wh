@@ -1,0 +1,37 @@
+variables:
+  NAMESPACE: 'wh'
+  CHART_NAME: 'wh'
+  CHART_PATH: './chart' 
+
+## CI JOBS
+.ci_job: &ci_job
+   only:
+     - production
+
+.ci_manual_job: &ci_manual_job
+  when: manual
+  <<: *ci_job
+
+.create-namespace: &create-namespace
+  script:
+  - kubectl create namespace "$NAMESPACE"
+
+.install_upgrade: &install_upgrade
+  script:
+  - helm upgrade --install "$HELM_RELEASE_NAME" -f "$HELM_VALUES" "$CHART_PATH" --namespace "$NAMESPACE"
+
+stages:
+  - kubectl
+  - helm
+
+01-create-namespace:
+  stage: kubectl
+  variables:
+  <<: *create-namespace
+  <<: *ci_manual_job
+
+01-install_upgrade:
+  stage: helm
+  variables:
+  <<: *install_upgrade
+  <<: *ci_manual_job
